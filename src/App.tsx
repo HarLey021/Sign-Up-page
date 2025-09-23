@@ -1,11 +1,13 @@
-import GlobalStyle from "./styles/GlobalStyles";
+import GlobalStyles from "./styles/GlobalStyles";
+import MainPage from "./components/mainPage/MainPage";
 
-function App() {
+const App: React.FC = () => {
   return (
     <>
-      <GlobalStyle />
+      <GlobalStyles />
+      <MainPage />
     </>
   );
-}
+};
 
 export default App;
