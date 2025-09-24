@@ -1,10 +1,13 @@
 import styled from "styled-components";
 
 const Input: React.FC<{
-  name: string;
+  name: keyof UserInfoInterface;
   userInfo: UserInfoInterface;
   setUserInfo: React.Dispatch<React.SetStateAction<UserInfoInterface>>;
-}> = ({ name, userInfo, setUserInfo }) => {
+  placeholder: string;
+  errors: UserInfoInterface;
+  type: string;
+}> = ({ name, userInfo, setUserInfo, placeholder, errors, type }) => {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUserInfo({ ...userInfo, [event.target.name]: event.target.value });
   };
@@ -14,11 +17,14 @@ const Input: React.FC<{
       <InputWrapper>
         <InputContainer
           onChange={handleChange}
-          //   name={name}
+          name={name}
           id={name}
-          placeholder={name}
+          value={userInfo[name]}
+          placeholder={placeholder}
+          type={type}
         ></InputContainer>
-        <ErrorIcon src="icon-error.svg" />
+        {errors[name] && <ErrorIcon src="icon-error.svg" />}
+        {errors[name] && <Error>{errors[name]}</Error>}
       </InputWrapper>
     </>
   );
@@ -37,6 +43,7 @@ const InputContainer = styled.input`
   font-size: 14px;
   font-weight: 600;
   letter-spacing: 0.25px;
+  margin-bottom: 6px;
 
   &::placeholder {
     opacity: 0.75;
@@ -49,9 +56,17 @@ const ErrorIcon = styled.img`
   right: 24px;
 `;
 
+const Error = styled.p`
+  color: #ff7979;
+  text-align: right;
+  font-size: 11px;
+  font-style: italic;
+  font-weight: 500;
+`;
+
 const InputWrapper = styled.div`
   width: 100%;
-  height: 56px;
+  min-height: 56px;
   margin-bottom: 16px;
   position: relative;
 

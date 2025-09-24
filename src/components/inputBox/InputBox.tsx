@@ -3,11 +3,13 @@ import Input from "../input/Input";
 import { useState } from "react";
 
 const InputBox: React.FC = () => {
-  const inputArray: string[] = [
-    "First Name",
-    "Last Name",
-    "Email Address",
-    "Password",
+  const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+
+  const inputArray: inputArrayInterface[] = [
+    { key: "firstName", placeholder: "First Name", type: "text" },
+    { key: "lastName", placeholder: "Last Name", type: "text" },
+    { key: "email", placeholder: "Email Address", type: "email" },
+    { key: "password", placeholder: "Password", type: "password" },
   ];
 
   const [userInfo, setUserInfo] = useState<UserInfoInterface>({
@@ -17,16 +19,52 @@ const InputBox: React.FC = () => {
     password: "",
   });
 
+  const [errors, setErrors] = useState<UserInfoInterface>({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+  });
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const newErrors = {
+      firstName: userInfo.firstName.trim() ? "" : "First Name cannot be empty",
+      lastName: userInfo.lastName.trim() ? "" : "Last Name cannot be empty",
+      email: gmailRegex.test(userInfo.email)
+        ? ""
+        : "Looks like this is not an email",
+      password: userInfo.password.trim() ? "" : "Password cannot be empty",
+    };
+
+    setErrors(newErrors);
+
+    const hasErrors = Object.values(newErrors).some((e) => e !== "");
+
+    if (!hasErrors) {
+      setUserInfo({
+        firstName: "",
+        lastName: "",
+        email: "",
+        password: "",
+      });
+    }
   };
-  console.log(userInfo);
   return (
     <>
       <WhiteContainer>
         <form onSubmit={handleSubmit}>
-          {inputArray.map((name: string) => (
-            <Input name={name} userInfo={userInfo} setUserInfo={setUserInfo} />
+          {inputArray.map(({ key, placeholder, type }) => (
+            <Input
+              key={key}
+              name={key}
+              userInfo={userInfo}
+              setUserInfo={setUserInfo}
+              placeholder={placeholder}
+              errors={errors}
+              type={type}
+            />
           ))}
           <Submit type="submit">CLAIM YOUR FREE TRIAL</Submit>
         </form>
@@ -43,14 +81,14 @@ export default InputBox;
 
 const WhiteContainer = styled.div`
   width: 100%;
-  height: 442px;
+  min-height: 442px;
   border-radius: 10px;
   background: #fff;
   box-shadow: 0 8px 0 0 rgba(0, 0, 0, 0.15);
   padding: 24px;
 
   @media (min-width: 1440px) {
-    height: 474px;
+    min-height: 474px;
     padding: 40px;
   }
 `;
